@@ -28,7 +28,7 @@ def downd_gcs(scene_name,outdir):
         print(scene_name+' Failed!')
     return
 
-def download_scencename(scene_name,outdir):
+def download_amazon(scene_name,outdir):
     # adapted from http://geologyandpython.com/get-landsat-8.html
     
     url = 'https://landsat-pds.s3.amazonaws.com/c1/L8/'    
