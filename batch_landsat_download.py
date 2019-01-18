@@ -2,6 +2,7 @@
 # coding: utf-8
 
 # In[ ]:
+#2019-01-18 Zhigang Cao
 
 from __future__ import print_function
 
@@ -17,7 +18,9 @@ def downd_gcs(scene_name,outdir):
     LANDSAT_PATH = os.path.join(outdir,path+'_'+row)
 
     download_url = url + path + '/' + row + '/' + scene_name + '/'
-    cmd = '/Users/zhigang/Scripts/google-cloud-sdk/bin/gsutil'
+    
+    # ensure that the gsutil has been installed.
+    cmd = './google-cloud-sdk/bin/gsutil'
     cmd = cmd + ' -m cp -r ' +download_url + ' ' + outdir
     print(cmd)
     status = subprocess.call(cmd,shell = True)
@@ -26,8 +29,9 @@ def downd_gcs(scene_name,outdir):
     return
 
 def download_scencename(scene_name,outdir):
-    url = 'https://landsat-pds.s3.amazonaws.com/c1/L8/'
+    # adapted from http://geologyandpython.com/get-landsat-8.html
     
+    url = 'https://landsat-pds.s3.amazonaws.com/c1/L8/'    
     print('EntityId:'+scene_name.strip()+'\n')
     
     #LC08_L1TP_139045_20170304_20170316_01_T1
@@ -39,6 +43,7 @@ def download_scencename(scene_name,outdir):
     print('url: {}'.format(download_url))
     
     # Request the html text of the download_url from the amazon server. 
+    
     response = requests.get(download_url)
     print(response.status_code)
     # If the response status code is fine (200)
@@ -68,7 +73,7 @@ def download_scencename(scene_name,outdir):
                 shutil.copyfileobj(response.raw, output)
             del response
 
-"""Main"""
+"""Main Proggram"""
 filename = '/Volumes/TOSHIBA_EXT/Landsat8_Data/2018Check/order_976756.txt'
 outdir = '/Volumes/TOSHIBA_EXT/Landsat8_Data/2018Check'
 for scene_name in open(filename,'r').readlines():
