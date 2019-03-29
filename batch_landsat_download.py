@@ -79,3 +79,4 @@ outdir = '/Volumes/TOSHIBA_EXT/Landsat8_Data/2018Check'
 for scene_name in open(filename,'r').readlines():
     downd_gcs(scene_name.strip(),outdir)
 
+# The gcs Landat were compressed, you can use the geotifcp -s to convert them to the origin format
