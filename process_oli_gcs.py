@@ -129,17 +129,16 @@ def make_png(l2file):
 def run_process(l1a_file, working_path, out_path):
 
     # parse the filename:LC08_L1TP_045030_20180507_20180517_01_T1
-
-    #strips the format of google
-    print('start to strips the tiff')
-
-    strips_tif(l1a_file,working_path)
-
     outfile = out_path + os.path.basename(l1a_file) + '_L2.h5'
 
     if os.path.exists(outfile):
         print('SKIP: %s' % outfile)
         return 0
+    
+    #strips the format of google
+    print('start to strips the tiff')
+
+    strips_tif(l1a_file,working_path)
 
     MTL_file = working_path + os.path.basename(l1a_file) + '_MTL.txt'
     # download ancfile
