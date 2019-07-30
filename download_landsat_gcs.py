@@ -4,6 +4,7 @@
 # Download the data files of Landsat T1 from google cloud storage
 # Before you used the script to download, two things need to be prepared
 # 1. install the gstuil toolbox as referenced:
+#    https://cloud.google.com/storage/docs/gsutil_install?hl=zh-cn
 # 2. Order a list of data in earthexplorer.usgs.gov
 #    then, save their scenced ID from the Traking Bulkorders
 #    input template:
