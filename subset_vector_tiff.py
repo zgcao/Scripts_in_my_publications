@@ -3,19 +3,17 @@ import os
 from glob import glob
 
 
-input_dir = '/Volumes/mac_zhigang/Satellite_Data/Wuliangsuhai'
+input_dir = '/Volumes/mac_zhigang/Satellite_Data/hulunhu/water_mask'
+
+lake_name = 'Lake_hulun'
 # detmine using the QGIS - subset tool
-lake_name = 'Lake_wuliangsuhai'
-xmin, ymin = 290768, 4563075
-xmax, ymax = 342910, 4512132
+win_limit = '483035.8501048693 5483280.65615943 576796.9481377334 5373672.611980166'
 
 all_tiff_files = glob(os.path.join(input_dir, '*.tif'))
 for tiff_file in all_tiff_files:
     base_name = os.path.splitext(tiff_file)[0]
     sub_outfile = base_name + '_' + lake_name + '.tiff'
-    limit = str(xmin) + ' ' + str(ymin) + ' ' + str(xmax) + ' ' + str(ymax)
-    print(limit)
-    sub_cmd = 'gdal_translate -projwin ' + limit + ' -of GTiff ' + \
+    sub_cmd = 'gdal_translate -projwin ' + win_limit + ' -of GTiff ' + \
         tiff_file + ' ' + sub_outfile
     print(sub_cmd)
     os.system(sub_cmd)
