@@ -9,21 +9,9 @@ import multiprocessing
 from matplotlib import pyplot as plt
 from netCDF4 import Dataset
 import xgboost as xgb
+import ctypes as c
 
 matplotlib.use('agg')
-
-
-# global variables
-chl = []
-rrc = []
-rows = []
-cols = []
-
-# load model
-model_path = '/Users/zhigang/Scripts/Python/landsat_chl_1984/model_v1/bst_chl_landsat_v1.model'
-np.seterr(divide='ignore', invalid='ignore')
-bst = xgb.Booster({'nthread': 4})  # init model
-bst.load_model(model_path)
 
 
 def read_img_data(filename):
@@ -191,19 +179,24 @@ def ostu_watermask(rrc_green, rrc_nir):
 
 
 def retrieve_chl_map(indices):
-    global chl
-    row = rows[indices]
-    col = cols[indices]
-    dtrain = xgb.DMatrix([rrc[:, row, col], ])
-    chl[row, col] = bst.predict(dtrain)
+    arr = np.frombuffer(chl.get_obj())
+    b = arr.reshape((line, col))
+
+    r = rows[indices]
+    c = cols[indices]
+
+    dtrain = xgb.DMatrix([rrc[:, r, c], ])
+    b[r, c] = bst.predict(dtrain)
 
 
 def apply_model_pixel(rrc_blue, rrc_green, rrc_red, rrc_nir, rrc_swir1, rrc_swir2):
     # calculate pixel by pixel
     # using the water_mask to filter the land pixel and only calculate the water pixel
     # this is a strategy to save time
-
-    line, col = rrc_blue.shape[0], rrc_blue.shape[1]
+    global line
+    global col
+    line = rrc_blue.shape[0]
+    col = rrc_blue.shape[1]
 
     # make a coarse atmospheric correction
     rrc_blue = rrc_blue - rrc_swir2
@@ -223,8 +216,7 @@ def apply_model_pixel(rrc_blue, rrc_green, rrc_red, rrc_nir, rrc_swir1, rrc_swir
     global rrc
     rrc = np.array([rrc_blue, rrc_green, rrc_red, rrc_nir, rrc_swir1, gb, rb, ng, nr, fai])
     global chl
-    chl = np.full((line, col), np.nan)
-
+    chl = multiprocessing.Array(c.c_double, line * col)
     # water mask
     water_mask = ostu_watermask(rrc_green, rrc_nir)
     # cloud mask
@@ -242,17 +234,23 @@ def apply_model_pixel(rrc_blue, rrc_green, rrc_red, rrc_nir, rrc_swir1, rrc_swir
     # start to calculate
     print('start time is {}'.format(time.strftime('%Y-%m-%d %H:%M:%S')))
     # cores = multiprocessing.cpu_count()
-    cores = 4
+    cores = 2
     pool = multiprocessing.Pool(processes=cores)
     cnt = 0
     n_elements = rows.size
     for _ in pool.imap_unordered(retrieve_chl_map, range(n_elements)):
         if cnt % interval == 0:
-            sys.stdout.write('Scans %d in %d => %d processed.\n' % (cnt, n_elements, cnt/n_elements))
+            sys.stdout.write('Scans %d in %d => %d processed.\n' % (cnt, n_elements, cnt/n_elements * 100))
         cnt += 1
-    #pool.map(retrieve_chl_map, index)
+    # pool.map(retrieve_chl_map, range(n_elements))
     print('end time is {}'.format(time.strftime('%Y-%m-%d %H:%M:%S')))
 
+    # recover the data from shared buffer
+    arr = np.frombuffer(chl.get_obj())
+    chl_pred = arr.reshape((line, col))
+    chl_pred[chl_pred<=0] = np.nan
+
+    return chl_pred
 
 def output_retrieval(l2r_ncfile, lat, lon, chlora):
     """Write the Chla, Lat, Lon to a nc file with a compression netcdf4 format"""
@@ -286,6 +284,21 @@ def plot_save_chlora(chl, outname):
     print('>>> chlora png generated at :' + time.strftime('%Y-%m-%d %H:%M:%S'))
 
 
+# global variables
+# chl used she shared memory for the multiprocessing
+chl = multiprocessing.Array(c.c_double, [])
+
+rrc = []
+rows = []
+cols = []
+line = []
+col = []
+# load model
+model_path = '/Users/zhigang/Scripts/Python/landsat_chl_1984/model_v1/bst_chl_landsat_v1.model'
+np.seterr(divide='ignore', invalid='ignore')
+bst = xgb.Booster({'nthread': 4})  # init model
+bst.load_model(model_path)
+
 if __name__ == '__main__':
     import glob
 
@@ -310,13 +323,13 @@ if __name__ == '__main__':
         rrc_blue, rrc_green, rrc_red, rrc_nir, rrc_swir1, rrc_swir2, lat, lon = read_img_data(filename)
 
         # apply the model to retrieve
-        apply_model_pixel(rrc_blue, rrc_green, rrc_red, rrc_nir,
+        chl_pred = apply_model_pixel(rrc_blue, rrc_green, rrc_red, rrc_nir,
                                 rrc_swir1, rrc_swir2)
 
         # writing data to a nc file
-        output_retrieval(l2r_ncfile, lat, lon, chl)
+        output_retrieval(l2r_ncfile, lat, lon, chl_pred)
         print('>>> ' + l2r_ncfile + ' exported!')
 
         l2r_pltfile = os.path.splitext(l2r_ncfile)[0] + '.png'
-        plot_save_chlora(chl, l2r_pltfile)
+        plot_save_chlora(chl_pred, l2r_pltfile)
         print('>>> ' + l2r_pltfile + ' exported!')
