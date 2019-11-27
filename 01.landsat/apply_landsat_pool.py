@@ -243,6 +243,7 @@ def apply_model_pixel(rrc_blue, rrc_green, rrc_red, rrc_nir, rrc_swir1, rrc_swir
             sys.stdout.write('Scans %d in %d => %d processed.\n' % (cnt, n_elements, cnt/n_elements * 100))
         cnt += 1
     # pool.map(retrieve_chl_map, range(n_elements))
+    pool.close()
     print('end time is {}'.format(time.strftime('%Y-%m-%d %H:%M:%S')))
 
     # recover the data from shared buffer
