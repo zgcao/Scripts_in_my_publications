@@ -10,10 +10,8 @@ This repository is used to retrieve the chlorophyll-a and SPM concentration from
 
 ### Description for this algorithm
 Current performance is shown in the following scatter plots, with 70% of the data used for training and 30% for testing.
-**Models supplied in this repository are trained using 100% of the dataset** for a potential improvement in other regions, and so observed performance may differ slightly.
-<p align="center">
-	<img src="./Performance.png?raw=true"></img>
-</p>
+
+The codes and model file would be avaiable once the paper is published.
 
 Please let me know if you have any concerns.
 
