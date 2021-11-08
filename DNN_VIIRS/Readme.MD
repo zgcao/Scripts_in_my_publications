@@ -3,7 +3,7 @@
 ### About
 This repository contains source code for the following papers:
 
-- <i>["Cao et al., (2021), to be submitted. </i>
+- <i>["Cao et al., (2021), to be submitted. </i>]
 
 ### Usage
 This repository is used to retrieve the chlorophyll-a and SPM concentration from VIIRS Rayleigh-corrected reflectance, which can be produced by SeaDAS.
