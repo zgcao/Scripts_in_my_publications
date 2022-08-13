@@ -1,2 +1,2 @@
-## The models will be avaiable once the paper was published!
+## The models will be avaiable soon!
 ## Contact: zgcao@niglas.ac.cn
