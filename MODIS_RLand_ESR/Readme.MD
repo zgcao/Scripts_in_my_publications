@@ -1,4 +1,4 @@
-# Lake chlorophyll-a estimates from Landsat-8 measurments
+# SPM estimates from MODIS surface reflectance data
 
 ### About
 This repository contains source code for the following papers:
@@ -8,9 +8,11 @@ This repository contains source code for the following papers:
 ### Usage
 This repository is used to retrieve the SPM and chlorophyll-a concentration from MODIS surface reflectance data. The xgboost model can be robust for SPM retrievals yet the chl-a model does not work well.
 
+I am prepraing a demo to call these models, and will release soon.
+
 ### Description for this algorithm
 <p align="center">
-	<img src="./figures/Figure-7.png?raw=true"></img>
+	<img src="./figures/Figure7.png?raw=true"></img>
 </p>
 
 Please let me know if you have any concerns.
