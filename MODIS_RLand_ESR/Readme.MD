@@ -10,13 +10,15 @@ This repository is used to retrieve the SPM and chlorophyll-a concentration from
 
 I am prepraing a demo to call these models, and will release soon.
 
-### Description for this algorithm
-<p align="center">
-	<img src="./figures/Figure7.png?raw=true"></img>
-</p>
 
 Please let me know if you have any concerns.
 
 Zhigang Cao
 
 zgcao@niglas.ac.cn
+
+### Assessment of SPM algorithms in ESR paper
+<p align="center">
+	<img src="./figures/Figure7.png?raw=true"></img>
+</p>
+
