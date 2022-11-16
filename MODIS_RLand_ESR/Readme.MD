@@ -8,7 +8,8 @@ This repository contains source code for the following papers:
 ### Usage
 This repository is used to retrieve the SPM and chlorophyll-a concentration from MODIS surface reflectance data. The xgboost model can be robust for SPM retrievals yet the chl-a model does not work well.
 
-I am prepraing a demo to call these models, and will release soon.
+
+I am prepraing a easy-use script to use these models for retrieving SPM from MODIS reflectance, and will release soon.
 
 
 Please let me know if you have any concerns.
